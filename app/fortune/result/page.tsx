@@ -225,6 +225,17 @@ export default function FortuneResult() {
     name: "✍️", // 姓名解析
   };
 
+  // 在 basicInfo 后添加评分数据
+  const scoreData = {
+    total: 94,  // 综合评分
+    aspects: [
+      { name: "事业运", score: 95 },
+      { name: "财运", score: 92 },
+      { name: "健康运", score: 96 },
+      { name: "感情运", score: 93 },
+    ]
+  };
+
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-b from-primary-50 to-white">
       <div className="max-w-4xl mx-auto">
@@ -258,9 +269,126 @@ export default function FortuneResult() {
               </div>
             </div>
 
-            <div className="text-center p-4 bg-gradient-to-r from-primary-100 to-pink-100 rounded-lg">
+            <div className="text-center p-4 bg-gradient-to-r from-primary-100 to-pink-100 rounded-lg mb-6">
               <div className="text-sm text-gray-600 mb-2">八字</div>
               <div className="text-xl font-medium">{resultData.basicInfo.eightCharacters}</div>
+            </div>
+
+            {/* 修改评分区域的样式 */}
+            <div className="mt-8 p-6 bg-gradient-to-br from-primary-50 via-white to-pink-50 rounded-xl border border-primary-100">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                {/* 左侧：总评分 */}
+                <div className="text-center md:border-r border-primary-100 pr-8">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">命盘综合评分</h3>
+                  <div className="relative inline-block">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-600 to-pink-600 p-1"
+                    >
+                      <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 }}
+                          className="text-center"
+                        >
+                          <span className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-primary-600 to-pink-600">
+                            {scoreData.total}
+                          </span>
+                          <span className="text-sm text-gray-500 block">分</span>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-sm px-3 py-1 rounded-full shadow-lg"
+                    >
+                      优秀
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* 中间：评分说明 */}
+                <div className="text-center md:text-left space-y-2">
+                  <h4 className="font-medium text-gray-700">评分说明</h4>
+                  <p className="text-sm text-gray-600">
+                    根据八字命盘分析，您的命格属于上等，具有以下特点：
+                  </p>
+                  <ul className="text-sm text-gray-600 list-disc list-inside">
+                    <li>五行搭配协调</li>
+                    <li>贵人运势旺盛</li>
+                    <li>财运发展稳健</li>
+                  </ul>
+                </div>
+
+                {/* 右侧：分项评分 */}
+                <div className="grid grid-cols-2 gap-4">
+                  {scoreData.aspects.map((aspect, index) => (
+                    <motion.div
+                      key={aspect.name}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 * index }}
+                      className="relative"
+                    >
+                      <div className="text-center">
+                        <div className="relative inline-block">
+                          <svg className="w-16 h-16" viewBox="0 0 100 100">
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="45"
+                              fill="none"
+                              stroke="#e2e8f0"
+                              strokeWidth="8"
+                            />
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="45"
+                              fill="none"
+                              stroke="url(#gradient)"
+                              strokeWidth="8"
+                              strokeDasharray={`${2 * Math.PI * 45 * aspect.score / 100} ${2 * Math.PI * 45}`}
+                              strokeDashoffset={2 * Math.PI * 45 * 0.25}
+                              className="transform -rotate-90 origin-center"
+                            />
+                            <defs>
+                              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#7c3aed" />
+                                <stop offset="100%" stopColor="#ec4899" />
+                              </linearGradient>
+                            </defs>
+                            <text
+                              x="50"
+                              y="50"
+                              textAnchor="middle"
+                              dy="0.3em"
+                              className="text-xl font-bold fill-gray-700"
+                            >
+                              {aspect.score}
+                            </text>
+                          </svg>
+                        </div>
+                        <div className="text-sm font-medium text-gray-600 mt-1">{aspect.name}</div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="mt-6 text-center text-sm text-gray-500 border-t border-primary-100 pt-4"
+              >
+                * 评分基于八字命盘分析，结合多个维度综合评定，分数区间：90-100分为优秀
+              </motion.div>
             </div>
           </div>
 
