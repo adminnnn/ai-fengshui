@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import zhCN from 'date-fns/locale/zh-CN';
+import { zhCN } from 'date-fns/locale';
 
 // 注册中文语言包
 registerLocale('zh-CN', zhCN);
@@ -14,6 +14,8 @@ type TimeRange = {
   end: string;
   name: string;
   description: string;
+  icon: string;
+  zodiac: string;
 };
 
 export default function Fortune() {
@@ -26,27 +28,23 @@ export default function Fortune() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const timeRanges: TimeRange[] = [
-    { start: "23:00", end: "01:00", name: "子时", description: "夜半" },
-    { start: "01:00", end: "03:00", name: "丑时", description: "鸡鸣" },
-    { start: "03:00", end: "05:00", name: "寅时", description: "平旦" },
-    { start: "05:00", end: "07:00", name: "卯时", description: "日出" },
-    { start: "07:00", end: "09:00", name: "辰时", description: "食时" },
-    { start: "09:00", end: "11:00", name: "巳时", description: "隅中" },
-    { start: "11:00", end: "13:00", name: "午时", description: "日中" },
-    { start: "13:00", end: "15:00", name: "未时", description: "日昳" },
-    { start: "15:00", end: "17:00", name: "申时", description: "哺时" },
-    { start: "17:00", end: "19:00", name: "酉时", description: "日入" },
-    { start: "19:00", end: "21:00", name: "戌时", description: "黄昏" },
-    { start: "21:00", end: "23:00", name: "亥时", description: "人定" },
+    { start: "23:00", end: "01:00", name: "子时", description: "夜半", icon: "🌑", zodiac: "🐀" },
+    { start: "01:00", end: "03:00", name: "丑时", description: "鸡鸣", icon: "🐓", zodiac: "🐂" },
+    { start: "03:00", end: "05:00", name: "寅时", description: "平旦", icon: "🌅", zodiac: "🐅" },
+    { start: "05:00", end: "07:00", name: "卯时", description: "日出", icon: "🌄", zodiac: "🐇" },
+    { start: "07:00", end: "09:00", name: "辰时", description: "食时", icon: "🍚", zodiac: "🐉" },
+    { start: "09:00", end: "11:00", name: "巳时", description: "隅中", icon: "☀️", zodiac: "🐍" },
+    { start: "11:00", end: "13:00", name: "午时", description: "日中", icon: "🌞", zodiac: "🐎" },
+    { start: "13:00", end: "15:00", name: "未时", description: "日昳", icon: "🌤", zodiac: "🐐" },
+    { start: "15:00", end: "17:00", name: "申时", description: "哺时", icon: "🌥", zodiac: "🐒" },
+    { start: "17:00", end: "19:00", name: "酉时", description: "日入", icon: "🌆", zodiac: "🐓" },
+    { start: "19:00", end: "21:00", name: "戌时", description: "黄昏", icon: "🌙", zodiac: "🐕" },
+    { start: "21:00", end: "23:00", name: "亥时", description: "人定", icon: "🌛", zodiac: "🐖" },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 处理表单提交
-    console.log({
-      ...formData,
-      birthDate: selectedDate,
-    });
+    window.location.href = '/fortune/result';
   };
 
   return (
@@ -65,7 +63,8 @@ export default function Fortune() {
             {/* 姓名和性别 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <span className="text-primary-500">👤</span>
                   姓名
                 </label>
                 <input
@@ -78,7 +77,8 @@ export default function Fortune() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <span className="text-primary-500">👥</span>
                   性别
                 </label>
                 <div className="flex gap-4">
@@ -88,7 +88,7 @@ export default function Fortune() {
                       onClick={() => setFormData({ ...formData, gender })}
                       className={`flex-1 py-2 px-4 rounded-lg cursor-pointer text-center transition-all duration-200 ${
                         formData.gender === gender
-                          ? 'bg-primary-600 text-white'
+                          ? 'bg-primary-600 text-white shadow-lg'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
@@ -101,7 +101,8 @@ export default function Fortune() {
 
             {/* 出生日期 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <span className="text-primary-500">📅</span>
                 出生日期（公历）
               </label>
               <DatePicker
@@ -132,21 +133,26 @@ export default function Fortune() {
 
             {/* 出生时辰 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <span className="text-primary-500">⏰</span>
                 出生时辰
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {timeRanges.map((time) => (
                   <div
                     key={time.name}
-                    className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                    className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 ${
                       formData.timeRange === time.name
-                        ? 'border-primary-500 bg-primary-50'
+                        ? 'border-primary-500 bg-primary-50 shadow-lg'
                         : 'border-gray-200 hover:border-primary-300'
                     }`}
                     onClick={() => setFormData({ ...formData, timeRange: time.name })}
                   >
                     <div className="text-center">
+                      <div className="flex justify-center gap-2 mb-2">
+                        <span className="text-2xl">{time.icon}</span>
+                        <span className="text-2xl">{time.zodiac}</span>
+                      </div>
                       <div className="font-medium text-gray-900">{time.name}</div>
                       <div className="text-sm text-gray-500">
                         {time.start}-{time.end}
@@ -163,7 +169,7 @@ export default function Fortune() {
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-4 px-8 bg-gradient-to-r from-primary-600 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-lg"
+              className="w-full py-4 px-8 bg-gradient-to-r from-primary-600 to-pink-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-lg shadow-lg"
             >
               开始测算
             </motion.button>
