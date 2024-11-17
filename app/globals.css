@@ -1,7 +1,9 @@
+/* Tailwind CSS 导入 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 自定义样式 */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -13,6 +15,7 @@ body {
   background: white;
 }
 
+/* React Calendar 自定义样式 */
 .react-calendar {
   width: 350px;
   max-width: 100%;
@@ -50,6 +53,7 @@ body {
   background-color: #f3f4f6;
 }
 
+/* React DatePicker 自定义样式 */
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -80,4 +84,8 @@ body {
   padding: 0.25rem;
   border-radius: 0.25rem;
   border: 1px solid #e5e7eb;
+}
+
+html {
+  scroll-behavior: smooth;
 } 

@@ -14,7 +14,10 @@ import {
   Tooltip,
   Legend,
   Filler,
-  RadarController
+  RadarController,
+  ChartOptions,
+  Scale,
+  ScriptableContext
 } from 'chart.js';
 
 // 注册 Chart.js 组件
@@ -30,6 +33,55 @@ ChartJS.register(
   Filler,
   RadarController
 );
+
+// 为折线图定义选项类型
+const lineChartOptions: ChartOptions<'line'> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+    title: {
+      display: true,
+      text: '运势走向分析'
+    }
+  },
+  scales: {
+    y: {
+      min: 0,
+      max: 100,
+      ticks: {
+        callback: function(this: Scale, tickValue: number | string) {
+          return tickValue + '%';
+        }
+      }
+    }
+  }
+};
+
+// 为雷达图定义选项类型
+const radarChartOptions: ChartOptions<'radar'> = {
+  scales: {
+    r: {
+      angleLines: {
+        display: true
+      },
+      suggestedMin: 0,
+      suggestedMax: 100,
+      ticks: {
+        stepSize: 20,
+        callback: function(this: Scale, tickValue: number | string) {
+          return tickValue + '%';
+        }
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+};
 
 export default function FortuneResult() {
   // 模拟测算结果数据
@@ -148,30 +200,6 @@ export default function FortuneResult() {
     ],
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: '2024年运势走向预测',
-      },
-    },
-    scales: {
-      y: {
-        min: 0,
-        max: 100,
-        ticks: {
-          callback: function(value: number) {
-            return value + '%';
-          },
-        },
-      },
-    },
-  };
-
   // 添加雷达图数据
   const radarData = {
     labels: ['事业运', '财运', '感情运', '健康运', '学业运', '人际运'],
@@ -185,29 +213,6 @@ export default function FortuneResult() {
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgb(124, 58, 237)',
     }]
-  };
-
-  const radarOptions = {
-    scales: {
-      r: {
-        angleLines: {
-          display: true
-        },
-        suggestedMin: 0,
-        suggestedMax: 100,
-        ticks: {
-          stepSize: 20,
-          callback: function(value: number) {
-            return value + '%';
-          }
-        }
-      }
-    },
-    plugins: {
-      legend: {
-        display: false
-      }
-    }
   };
 
   // 添加分析项的图标映射
@@ -533,7 +538,7 @@ export default function FortuneResult() {
               <h2 className="text-xl font-semibold text-primary-600">运势走向预测</h2>
             </div>
             <div className="aspect-[16/9] w-full">
-              <Line data={fortuneChartData} options={chartOptions} />
+              <Line data={fortuneChartData} options={lineChartOptions} />
             </div>
             <div className="mt-4 text-sm text-gray-500">
               * 图表显示未来一年的运势变化趋势，包括综合运势、事业运和财运三个维度
@@ -552,7 +557,7 @@ export default function FortuneResult() {
               <h2 className="text-xl font-semibold text-primary-600">运势分析雷达图</h2>
             </div>
             <div className="aspect-[16/9] w-full">
-              <Radar data={radarData} options={radarOptions} />
+              <Radar data={radarData} options={radarChartOptions} />
             </div>
             <div className="mt-4 text-sm text-gray-500">
               * 雷达图展示各个生活领域的运势强弱分布

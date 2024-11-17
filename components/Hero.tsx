@@ -38,8 +38,14 @@ export default function Hero() {
               开始测算
             </Link>
             <Link 
-              href="/about"
+              href="#features"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-primary-600 bg-white border-2 border-primary-600 rounded-full hover:bg-primary-50 transition-all duration-200"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('features')?.scrollIntoView({ 
+                  behavior: 'smooth'
+                });
+              }}
             >
               了解更多
             </Link>
