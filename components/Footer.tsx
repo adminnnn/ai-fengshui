@@ -2,17 +2,35 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const contactInfo = [
     { id: 'phone', icon: '📱', info: '联系电话: 123-456-7890', href: '#' },
     { id: 'wechat', icon: '💬', info: '微信号: AI-BaZi', href: '#' },
     { id: 'email', icon: '✉️', info: '邮箱: contact@aibazi.com', href: '#' }
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setActiveTooltip(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleIconClick = (id: string) => {
+    setActiveTooltip(activeTooltip === id ? null : id);
+  };
 
   return (
     <footer className="bg-white border-t border-gray-200">
@@ -31,17 +49,18 @@ export default function Footer() {
           <div className="flex space-x-6">
             {contactInfo.map(({ id, icon, info, href }) => (
               <div key={id} className="relative">
-                <motion.a
-                  href={href}
-                  onMouseEnter={() => setActiveTooltip(id)}
-                  onMouseLeave={() => setActiveTooltip(null)}
+                <motion.button
+                  onClick={() => handleIconClick(id)}
                   whileHover={{ scale: 1.1 }}
                   className="text-gray-400 hover:text-primary-600 inline-block"
                 >
                   <span className="text-2xl">{icon}</span>
-                </motion.a>
+                </motion.button>
                 {activeTooltip === id && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50 whitespace-nowrap">
+                  <div 
+                    ref={tooltipRef}
+                    className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50 whitespace-nowrap"
+                  >
                     <p className="text-sm text-gray-600">{info}</p>
                   </div>
                 )}
@@ -59,4 +78,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-} 
+}
