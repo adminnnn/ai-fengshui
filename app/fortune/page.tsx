@@ -9,14 +9,14 @@ import { zhCN } from 'date-fns/locale';
 // 注册中文语言包
 registerLocale('zh-CN', zhCN);
 
-type TimeRange = {
+interface TimeRange {
   start: string;
   end: string;
   name: string;
   description: string;
   icon: string;
   zodiac: string;
-};
+}
 
 export default function Fortune() {
   const [formData, setFormData] = useState({
@@ -28,18 +28,102 @@ export default function Fortune() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const timeRanges: TimeRange[] = [
-    { start: "23:00", end: "01:00", name: "子时", description: "夜半", icon: "🌑", zodiac: "🐀" },
-    { start: "01:00", end: "03:00", name: "丑时", description: "鸡鸣", icon: "🐓", zodiac: "🐂" },
-    { start: "03:00", end: "05:00", name: "寅时", description: "平旦", icon: "🌅", zodiac: "🐅" },
-    { start: "05:00", end: "07:00", name: "卯时", description: "日出", icon: "🌄", zodiac: "🐇" },
-    { start: "07:00", end: "09:00", name: "辰时", description: "食时", icon: "🍚", zodiac: "🐉" },
-    { start: "09:00", end: "11:00", name: "巳时", description: "隅中", icon: "☀️", zodiac: "🐍" },
-    { start: "11:00", end: "13:00", name: "午时", description: "日中", icon: "🌞", zodiac: "🐎" },
-    { start: "13:00", end: "15:00", name: "未时", description: "日昳", icon: "🌤", zodiac: "🐐" },
-    { start: "15:00", end: "17:00", name: "申时", description: "哺时", icon: "🌥", zodiac: "🐒" },
-    { start: "17:00", end: "19:00", name: "酉时", description: "日入", icon: "🌆", zodiac: "🐓" },
-    { start: "19:00", end: "21:00", name: "戌时", description: "黄昏", icon: "🌙", zodiac: "🐕" },
-    { start: "21:00", end: "23:00", name: "亥时", description: "人定", icon: "🌛", zodiac: "🐖" },
+    {
+      start: "23:00",
+      end: "01:00",
+      name: "子时",
+      description: "夜半，人定、万籁俱寂之时",
+      icon: "🌑",
+      zodiac: "鼠"
+    },
+    {
+      start: "01:00",
+      end: "03:00",
+      name: "丑时",
+      description: "鸡鸣、人醒觉之时",
+      icon: "🌒",
+      zodiac: "牛"
+    },
+    {
+      start: "03:00",
+      end: "05:00",
+      name: "寅时",
+      description: "卯始、日光微现之时",
+      icon: "🌓",
+      zodiac: "虎"
+    },
+    {
+      start: "05:00",
+      end: "07:00",
+      name: "卯时",
+      description: "日出、万物始生之时",
+      icon: "🌔",
+      zodiac: "兔"
+    },
+    {
+      start: "07:00",
+      end: "09:00",
+      name: "辰时",
+      description: "食时、人起而趋市之时",
+      icon: "🌕",
+      zodiac: "龙"
+    },
+    {
+      start: "09:00",
+      end: "11:00",
+      name: "巳时",
+      description: "隅中、日照当空之时",
+      icon: "🌖",
+      zodiac: "蛇"
+    },
+    {
+      start: "11:00",
+      end: "13:00",
+      name: "午时",
+      description: "日中、阳气极盛之时",
+      icon: "🌗",
+      zodiac: "马"
+    },
+    {
+      start: "13:00",
+      end: "15:00",
+      name: "未时",
+      description: "日跌、阳气始衰之时",
+      icon: "🌘",
+      zodiac: "羊"
+    },
+    {
+      start: "15:00",
+      end: "17:00",
+      name: "申时",
+      description: "哺时、人将息之时",
+      icon: "🌑",
+      zodiac: "猴"
+    },
+    {
+      start: "17:00",
+      end: "19:00",
+      name: "酉时",
+      description: "日入、天色将暗之时",
+      icon: "🌒",
+      zodiac: "鸡"
+    },
+    {
+      start: "19:00",
+      end: "21:00",
+      name: "戌时",
+      description: "黄昏、夜幕降临之时",
+      icon: "🌓",
+      zodiac: "狗"
+    },
+    {
+      start: "21:00",
+      end: "23:00",
+      name: "亥时",
+      description: "人定、夜深人静之时",
+      icon: "🌔",
+      zodiac: "猪"
+    }
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
