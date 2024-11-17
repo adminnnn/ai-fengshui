@@ -9,9 +9,9 @@ export default function Footer() {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   const contactInfo = [
-    { id: 'phone', icon: '📱', info: '联系电话: 123-456-7890' },
-    { id: 'wechat', icon: '💬', info: '微信号: AI-BaZi' },
-    { id: 'email', icon: '✉️', info: '邮箱: contact@aibazi.com' }
+    { id: 'phone', icon: '📱', info: '联系电话: 123-456-7890', href: '#' },
+    { id: 'wechat', icon: '💬', info: '微信号: AI-BaZi', href: '#' },
+    { id: 'email', icon: '✉️', info: '邮箱: contact@aibazi.com', href: '#' }
   ];
 
   return (
@@ -29,18 +29,20 @@ export default function Footer() {
             融合传统命理与人工智能，为您提供专业的人生指引。
           </p>
           <div className="flex space-x-6">
-            {contactInfo.map(({ id, icon, info }) => (
+            {contactInfo.map(({ id, icon, info, href }) => (
               <div key={id} className="relative">
-                <motion.button
-                  onClick={() => setActiveTooltip(activeTooltip === id ? null : id)}
+                <motion.a
+                  href={href}
+                  onMouseEnter={() => setActiveTooltip(id)}
+                  onMouseLeave={() => setActiveTooltip(null)}
                   whileHover={{ scale: 1.1 }}
-                  className="text-gray-400 hover:text-primary-600"
+                  className="text-gray-400 hover:text-primary-600 inline-block"
                 >
                   <span className="text-2xl">{icon}</span>
-                </motion.button>
+                </motion.a>
                 {activeTooltip === id && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                    <p className="whitespace-nowrap text-sm text-gray-600">{info}</p>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50 whitespace-nowrap">
+                    <p className="text-sm text-gray-600">{info}</p>
                   </div>
                 )}
               </div>
