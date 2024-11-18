@@ -150,6 +150,7 @@ export default function FortuneResult() {
         goodMonths: ["3月", "7月", "11月", "12月"],
         cautionMonths: ["4月", "9月"],
         goodHours: ["午时", "巳时", "寅时"],
+        cautionHours: ["申时", "子时", "亥时"],
       },
       solutions: [
         "佩戴紫水晶可增强运势",
@@ -165,6 +166,7 @@ export default function FortuneResult() {
         "投资理财宜稳健为主，避免激进",
         "注意保持作息规律，适度运动",
         "可考虑参加进修或考试",
+        "可考虑参加小孩子比赛",
       ],
     },
   };
@@ -460,29 +462,6 @@ export default function FortuneResult() {
 
                 <div>
                   <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <span className="text-xl">⏰</span>
-                    时间选择
-                  </h3>
-                  <div className="space-y-2 pl-8">
-                    <div className="flex gap-2">
-                      <span className="text-gray-600">吉利月份：</span>
-                      <span>📅 {resultData.suggestions.timing.goodMonths.join('、')}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="text-gray-600">谨慎月份：</span>
-                      <span>⚠️ {resultData.suggestions.timing.cautionMonths.join('、')}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="text-gray-600">吉利时辰：</span>
-                      <span>🕐 {resultData.suggestions.timing.goodHours.join('、')}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-3 flex items-center gap-2">
                     <span className="text-xl">💫</span>
                     化解方案
                   </h3>
@@ -500,6 +479,33 @@ export default function FortuneResult() {
                       </motion.li>
                     ))}
                   </ul>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <span className="text-xl">⏰</span>
+                    时间选择
+                  </h3>
+                  <div className="space-y-2 pl-8">
+                    <div className="flex gap-2">
+                      <span className="text-gray-600">吉利月份：</span>
+                      <span>📅 {resultData.suggestions.timing.goodMonths.join('、')}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-600">谨慎月份：</span>
+                      <span>⚠️ {resultData.suggestions.timing.cautionMonths.join('、')}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-600">吉利时辰：</span>
+                      <span>🕐 {resultData.suggestions.timing.goodHours.join('、')}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-600">谨慎时辰：</span>
+                      <span>⚠️ {resultData.suggestions.timing.cautionHours.join('、')}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
