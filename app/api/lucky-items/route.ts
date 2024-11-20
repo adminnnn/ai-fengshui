@@ -108,7 +108,7 @@ export async function GET() {
       version: 'v1.3.0',
       type: '0',
       pageId: '1',
-      pageSize: '6',
+      pageSize: '10',
       keyWords: '开运',
       sort: 'monthSales',
       hasCoupon: '1',

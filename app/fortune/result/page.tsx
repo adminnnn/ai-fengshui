@@ -19,7 +19,7 @@ import {
   Scale,
   ScriptableContext
 } from 'chart.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import { LuckyItem } from '@/types/dataoke';
 
 // 注册 Chart.js 组件
@@ -249,6 +249,8 @@ export default function FortuneResult() {
   const [luckyItems, setLuckyItems] = useState<LuckyItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [displayCount, setDisplayCount] = useState(10); // 默认显示10个商品
+  const [itemsPerRow, setItemsPerRow] = useState(5); // 默认每行5个
 
   // 添加 useEffect 获取数据
   useEffect(() => {
@@ -309,6 +311,39 @@ export default function FortuneResult() {
       setIsLoading(false);
     }
   };
+
+  // 添加窗口大小监听和商品显示数量计算
+  useLayoutEffect(() => {
+    function updateSize() {
+      const width = window.innerWidth;
+      let newItemsPerRow;
+      
+      // 根据屏幕宽度设置每行显示数量
+      if (width >= 1536) { // 2xl
+        newItemsPerRow = 5;
+      } else if (width >= 1280) { // xl
+        newItemsPerRow = 4;
+      } else if (width >= 1024) { // lg
+        newItemsPerRow = 3;
+      } else if (width >= 768) { // md
+        newItemsPerRow = 2;
+      } else { // sm and xs
+        newItemsPerRow = 2;
+      }
+      
+      setItemsPerRow(newItemsPerRow);
+      setDisplayCount(newItemsPerRow * 2); // 始终显示2行
+    }
+
+    // 初始化
+    updateSize();
+
+    // 添加窗口大小变化监听
+    window.addEventListener('resize', updateSize);
+    
+    // 清理监听器
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-b from-primary-50 to-white">
@@ -598,7 +633,96 @@ export default function FortuneResult() {
               </div>
             </div>
           </motion.div>
-          
+
+          {/* 开运吉物 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.01 }}
+            className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-3xl">🎁</span>
+              <h2 className="text-xl font-semibold text-primary-600">开运吉物</h2>
+            </div>
+
+            {isLoading ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center h-40 text-red-500">
+                <span className="text-3xl mb-2">⚠️</span>
+                <p className="text-center">{error}</p>
+                <button 
+                  onClick={retryFetch}
+                  className="mt-4 px-4 py-2 text-sm text-white bg-primary-600 rounded-full hover:bg-primary-700"
+                >
+                  重试
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                  {luckyItems.slice(0, displayCount).map((item) => (
+                    <motion.a
+                      key={item.goodsId}
+                      href={item.shortUrl || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      whileHover={{ 
+                        y: -5,
+                        scale: 1.02,
+                        transition: { duration: 0.2 }
+                      }}
+                      className={`bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 
+                        hover:shadow-lg transition-all duration-300
+                        ${!item.shortUrl ? 'cursor-not-allowed opacity-60' : ''}`}
+                    >
+                      {/* 商品图片 */}
+                      <div className="relative pt-[100%] overflow-hidden group">
+                        <img
+                          src={item.mainPic}
+                          alt={item.title}
+                          className="absolute top-0 left-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                        />
+                        {/* 销量标签 */}
+                        <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full">
+                          月销 {item.monthSales.toLocaleString()}
+                        </div>
+                      </div>
+                      
+                      {/* 商品信息 */}
+                      <div className="p-3">
+                        {/* 商品标题 */}
+                        <h3 className="text-sm font-medium text-gray-900 min-h-[2.5rem] line-clamp-2 mb-2">
+                          {item.dtitle || item.title}
+                        </h3>
+                        
+                        {/* 价格区域 */}
+                        <div className="flex items-baseline">
+                          <span className="text-xs text-primary-600">¥</span>
+                          <span className="text-lg font-bold text-primary-600">{item.actualPrice}</span>
+                          {item.originalPrice > item.actualPrice && (
+                            <span className="ml-2 text-xs text-gray-400 line-through">
+                              ¥{item.originalPrice}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+                
+                {/* 底部说明文字 */}
+                <div className="mt-6 text-sm text-gray-500 text-center">
+                  * 以上商品均经过精心挑选，适合作为开运吉物使用。如果您喜欢本站，请购买支持，谢谢！
+                </div>
+              </>
+            )}
+          </motion.div>
           
           {/* 运势走向图表 */}
           <motion.div
@@ -638,94 +762,7 @@ export default function FortuneResult() {
             </div>
           </motion.div>
 
-          {/* 开运好物推荐 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.01 }}
-            className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-3xl">🎁</span>
-              <h2 className="text-xl font-semibold text-primary-600">开运好物推荐</h2>
-            </div>
-
-            {isLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center h-40 text-red-500">
-                <span className="text-3xl mb-2">⚠️</span>
-                <p className="text-center">{error}</p>
-                <button 
-                  onClick={retryFetch}
-                  className="mt-4 px-4 py-2 text-sm text-white bg-primary-600 rounded-full hover:bg-primary-700"
-                >
-                  重试
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {luckyItems.map((item) => (
-                    <motion.a
-                      key={item.goodsId}
-                      href={item.shortUrl || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      whileHover={{ y: -5 }}
-                      className={`bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 ${!item.shortUrl ? 'cursor-not-allowed opacity-60' : ''}`}
-                    >
-                      {/* 商品图片 */}
-                      <div className="relative pt-[100%]">
-                        <img
-                          src={item.mainPic}
-                          alt={item.title}
-                          className="absolute top-0 left-0 w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      {/* 商品信息 */}
-                      <div className="p-4">
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
-                          {item.dtitle}
-                        </h3>
-                        
-                        {/* 价格和销量 */}
-                        <div className="mt-2 flex items-center justify-between">
-                          <div className="flex items-baseline text-primary-600">
-                            <span className="text-xs">¥</span>
-                            <span className="text-lg font-medium">{item.actualPrice}</span>
-                            {item.couponPrice > 0 && (
-                              <span className="ml-2 text-xs text-white bg-primary-500 px-2 py-0.5 rounded">
-                                券¥{item.couponPrice}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            月销{item.monthSales}
-                          </div>
-                        </div>
-                        
-                        {/* 店铺名称 */}
-                        <div className="mt-2 text-xs text-gray-500 truncate">
-                          {item.shopName}
-                        </div>
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
-                
-                {/* 底部说明文字 */}
-                <div className="mt-6 text-sm text-gray-500 text-center">
-                  * 以上商品均经过精心挑选，适合作为开运吉物使用。价格和优惠信息实时更新。
-                </div>
-              </>
-            )}
-          </motion.div>
+          
 
           {/* 按钮区域 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
