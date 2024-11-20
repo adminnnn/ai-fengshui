@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { PrivilegeLinkResponse } from '@/types/dataoke';
 
 // 生成6位随机数
 function generateNonce(): string {
@@ -21,6 +22,61 @@ function generateSignRan(appKey: string, appSecret: string, nonce: string, timer
     console.error('Error generating signRan:', error);
     throw error;
   }
+}
+
+// 转链函数
+async function getPrivilegeLink(goodsId: string): Promise<string> {
+  try {
+    const appKey = process.env.DTK_APP_KEY;
+    const appSecret = process.env.DTK_APP_SECRET;
+    
+    if (!appKey || !appSecret) {
+      throw new Error('Missing API credentials');
+    }
+
+    // 生成nonce和timer
+    const nonce = generateNonce();
+    const timer = Date.now().toString();
+
+    // 生成signRan
+    const signRan = generateSignRan(appKey, appSecret, nonce, timer);
+
+    // 准备转链请求参数
+    const params: Record<string, string> = {
+      appKey,
+      version: 'v1.3.1',
+      goodsId,
+      nonce,
+      timer,
+      signRan
+    };
+
+    // 构建请求URL
+    const queryString = new URLSearchParams(params).toString();
+    const requestUrl = `https://openapi.dataoke.com/api/tb-service/get-privilege-link?${queryString}`;
+
+    console.log('Privilege link request:', requestUrl);
+
+    const response = await fetch(requestUrl);
+    const data = await response.json() as PrivilegeLinkResponse;
+
+    if (data.code !== 0) {
+      throw new Error(`转链失败: ${data.msg}`);
+    }
+
+    return data.data.shortUrl;
+  } catch (error) {
+    console.error('Error getting privilege link:', error);
+    throw error;
+  }
+}
+
+// 添加商品项的接口定义
+interface GoodsItem {
+  goodsId: string;
+  title: string;
+  monthSales: number;
+  // 根据实际API返回添加其他必要的字段
 }
 
 export async function GET() {
@@ -80,39 +136,44 @@ export async function GET() {
       }
     });
     
-    // 获取原始响应文本
-    const responseText = await response.text();
-    console.log('Raw API Response:', responseText);
-
-    // 尝试解析JSON
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Failed to parse API response:', e);
-      throw new Error('Invalid JSON response from API');
-    }
-
-    // 检查API响应
-    console.log('Parsed API Response:', {
-      code: data.code,
-      msg: data.msg,
-      hasData: !!data.data,
-      listLength: data.data?.list?.length
-    });
+    const data = await response.json();
 
     // 检查API返回的错误码
     if (data.code !== 0) {
-      console.error('API error:', {
-        code: data.code,
-        msg: data.msg,
-        params,
-        signRan
-      });
       throw new Error(`API error: ${data.msg}`);
     }
 
-    return NextResponse.json(data);
+    // 获取商品列表
+    const items = data.data.list;
+
+    // 为每个商品获取转链URL
+    const itemsWithLinks = await Promise.all(
+      items.map(async (item: GoodsItem) => {
+        try {
+          const shortUrl = await getPrivilegeLink(item.goodsId);
+          return {
+            ...item,
+            shortUrl
+          };
+        } catch (error) {
+          console.error(`Error getting privilege link for item ${item.goodsId}:`, error);
+          return {
+            ...item,
+            shortUrl: '' // 如果转链失败，返回空字符串
+          };
+        }
+      })
+    );
+
+    return NextResponse.json({
+      code: 0,
+      msg: 'success',
+      data: {
+        list: itemsWithLinks,
+        totalNum: data.data.totalNum,
+        pageId: data.data.pageId
+      }
+    });
   } catch (error) {
     // 捕获并记录详细错误信息
     console.error('Detailed error in lucky-items API:', {

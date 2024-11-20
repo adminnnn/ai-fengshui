@@ -461,7 +461,7 @@ export default function FortuneResult() {
                 transition={{ delay: 1 }}
                 className="mt-6 text-center text-sm text-gray-500 border-t border-primary-100 pt-4"
               >
-                * 评分基于八字命盘分析���结合多个维度综合评定，分数区间：90-100分为优秀
+                * 评分基于八字命盘分析结合多个维度综合评定，分数区间：90-100分为优秀
               </motion.div>
             </div>
           </div>
@@ -671,13 +671,13 @@ export default function FortuneResult() {
                   {luckyItems.map((item) => (
                     <motion.a
                       key={item.goodsId}
-                      href={item.couponLink}
+                      href={item.shortUrl || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       whileHover={{ y: -5 }}
-                      className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100"
+                      className={`bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 ${!item.shortUrl ? 'cursor-not-allowed opacity-60' : ''}`}
                     >
                       {/* 商品图片 */}
                       <div className="relative pt-[100%]">

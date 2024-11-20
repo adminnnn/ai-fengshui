@@ -9,8 +9,28 @@ export interface LuckyItem {
   mainPic: string;
   monthSales: number;
   couponPrice: number;
-  couponLink: string;
+  shortUrl: string;
   shopName: string;
+}
+
+// 转链API响应类型
+export interface PrivilegeLinkResponse {
+  code: number;
+  msg: string;
+  data: {
+    couponClickUrl: string;
+    couponEndTime: string;
+    couponInfo: string;
+    couponStartTime: string;
+    itemId: string;
+    couponTotalCount: string;
+    couponRemainCount: string;
+    itemUrl: string;
+    tpwd: string;
+    maxCommissionRate: string;
+    shortUrl: string;
+    minCommissionRate: string;
+  };
 }
 
 // API响应类型
