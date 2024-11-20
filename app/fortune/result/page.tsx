@@ -19,6 +19,8 @@ import {
   Scale,
   ScriptableContext
 } from 'chart.js';
+import { useEffect, useState } from 'react';
+import { LuckyItem } from '@/types/dataoke';
 
 // 注册 Chart.js 组件
 ChartJS.register(
@@ -225,7 +227,7 @@ export default function FortuneResult() {
     debt: "📊", // 负债
     marriage: "💑", // 婚恋
     truelove: "❤️", // 正缘
-    health: "💪", // 健康
+    health: "💪", // 健
     education: "📚", // 学业
     children: "👶", // 子女缘
     yearly: "🌟", // 大运流年
@@ -241,6 +243,71 @@ export default function FortuneResult() {
       { name: "健康运", score: 96 },
       { name: "感情运", score: 93 },
     ]
+  };
+
+  // 在 FortuneResult 组件内部添加状态
+  const [luckyItems, setLuckyItems] = useState<LuckyItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 添加 useEffect 获取数据
+  useEffect(() => {
+    const fetchLuckyItems = async () => {
+      try {
+        setError(null);
+        const response = await fetch('/api/lucky-items');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // 检查是否有错误返回
+        if (data.error) {
+          throw new Error(data.message || '获取商品数据失败');
+        }
+        
+        if (data.code === 0 && data.data?.list) {
+          setLuckyItems(data.data.list);
+        } else {
+          throw new Error(data.msg || '获取商品数据失败');
+        }
+      } catch (error) {
+        console.error('Error fetching lucky items:', error);
+        setError(error instanceof Error ? error.message : '获取商品数据失败');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLuckyItems();
+  }, []);
+
+  // 在组件内部定义重试函数
+  const retryFetch = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/lucky-items');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.message || '获取商品数据失败');
+      }
+      if (data.code === 0 && data.data?.list) {
+        setLuckyItems(data.data.list);
+      } else {
+        throw new Error(data.msg || '获取商品数据失败');
+      }
+    } catch (error) {
+      console.error('Error in retry:', error);
+      setError(error instanceof Error ? error.message : '获取商品数据失败');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -394,7 +461,7 @@ export default function FortuneResult() {
                 transition={{ delay: 1 }}
                 className="mt-6 text-center text-sm text-gray-500 border-t border-primary-100 pt-4"
               >
-                * 评分基于八字命盘分析，结合多个维度综合评定，分数区间：90-100分为优秀
+                * 评分基于八字命盘分析���结合多个维度综合评定，分数区间：90-100分为优秀
               </motion.div>
             </div>
           </div>
@@ -531,7 +598,8 @@ export default function FortuneResult() {
               </div>
             </div>
           </motion.div>
-
+          
+          
           {/* 运势走向图表 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -568,6 +636,95 @@ export default function FortuneResult() {
             <div className="mt-4 text-sm text-gray-500">
               * 雷达图展示各个生活领域的运势强弱分布
             </div>
+          </motion.div>
+
+          {/* 开运好物推荐 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.01 }}
+            className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-3xl">🎁</span>
+              <h2 className="text-xl font-semibold text-primary-600">开运好物推荐</h2>
+            </div>
+
+            {isLoading ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center h-40 text-red-500">
+                <span className="text-3xl mb-2">⚠️</span>
+                <p className="text-center">{error}</p>
+                <button 
+                  onClick={retryFetch}
+                  className="mt-4 px-4 py-2 text-sm text-white bg-primary-600 rounded-full hover:bg-primary-700"
+                >
+                  重试
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {luckyItems.map((item) => (
+                    <motion.a
+                      key={item.goodsId}
+                      href={item.couponLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      whileHover={{ y: -5 }}
+                      className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100"
+                    >
+                      {/* 商品图片 */}
+                      <div className="relative pt-[100%]">
+                        <img
+                          src={item.mainPic}
+                          alt={item.title}
+                          className="absolute top-0 left-0 w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      {/* 商品信息 */}
+                      <div className="p-4">
+                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+                          {item.dtitle}
+                        </h3>
+                        
+                        {/* 价格和销量 */}
+                        <div className="mt-2 flex items-center justify-between">
+                          <div className="flex items-baseline text-primary-600">
+                            <span className="text-xs">¥</span>
+                            <span className="text-lg font-medium">{item.actualPrice}</span>
+                            {item.couponPrice > 0 && (
+                              <span className="ml-2 text-xs text-white bg-primary-500 px-2 py-0.5 rounded">
+                                券¥{item.couponPrice}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            月销{item.monthSales}
+                          </div>
+                        </div>
+                        
+                        {/* 店铺名称 */}
+                        <div className="mt-2 text-xs text-gray-500 truncate">
+                          {item.shopName}
+                        </div>
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
+                
+                {/* 底部说明文字 */}
+                <div className="mt-6 text-sm text-gray-500 text-center">
+                  * 以上商品均经过精心挑选，适合作为开运吉物使用。价格和优惠信息实时更新。
+                </div>
+              </>
+            )}
           </motion.div>
 
           {/* 按钮区域 */}
