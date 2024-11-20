@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { PrivilegeLinkResponse } from '@/types/dataoke';
 
+// API URLs
+const GOODS_LIST_API = 'https://openapi.dataoke.com/api/goods/list-super-goods';
+const PRIVILEGE_LINK_API = 'https://openapi.dataoke.com/api/tb-service/get-privilege-link';
+
 // 生成6位随机数
 function generateNonce(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -10,13 +14,8 @@ function generateNonce(): string {
 // 生成验签
 function generateSignRan(appKey: string, appSecret: string, nonce: string, timer: string): string {
   try {
-    // 按照新的验签规则拼接字符串
     const signStr = `appKey=${appKey}&timer=${timer}&nonce=${nonce}&key=${appSecret}`;
-    
-    // 打印签名字符串用于调试
     console.log('Sign string before MD5:', signStr);
-
-    // MD5加密并转大写
     return crypto.createHash('md5').update(signStr).digest('hex').toUpperCase();
   } catch (error) {
     console.error('Error generating signRan:', error);
@@ -34,14 +33,10 @@ async function getPrivilegeLink(goodsId: string): Promise<string> {
       throw new Error('Missing API credentials');
     }
 
-    // 生成nonce和timer
     const nonce = generateNonce();
     const timer = Date.now().toString();
-
-    // 生成signRan
     const signRan = generateSignRan(appKey, appSecret, nonce, timer);
 
-    // 准备转链请求参数
     const params: Record<string, string> = {
       appKey,
       version: 'v1.3.1',
@@ -51,9 +46,8 @@ async function getPrivilegeLink(goodsId: string): Promise<string> {
       signRan
     };
 
-    // 构建请求URL
     const queryString = new URLSearchParams(params).toString();
-    const requestUrl = `https://openapi.dataoke.com/api/tb-service/get-privilege-link?${queryString}`;
+    const requestUrl = `${PRIVILEGE_LINK_API}?${queryString}`;
 
     console.log('Privilege link request:', requestUrl);
 
@@ -71,38 +65,20 @@ async function getPrivilegeLink(goodsId: string): Promise<string> {
   }
 }
 
-// 添加商品项的接口定义
-interface GoodsItem {
-  goodsId: string;
-  title: string;
-  monthSales: number;
-  // 根据实际API返回添加其他必要的字段
-}
-
 export async function GET() {
   try {
     const appKey = process.env.DTK_APP_KEY;
     const appSecret = process.env.DTK_APP_SECRET;
-    const apiUrl = process.env.DTK_API_URL;
 
-    // 检查环境变量
-    if (!appKey || !appSecret || !apiUrl) {
-      console.error('Missing environment variables:', {
-        appKey: !!appKey,
-        appSecret: !!appSecret,
-        apiUrl: !!apiUrl
-      });
+    if (!appKey || !appSecret) {
+      console.error('Missing API credentials');
       throw new Error('API configuration is incomplete');
     }
 
-    // 生成nonce和timer
     const nonce = generateNonce();
     const timer = Date.now().toString();
-
-    // 生成signRan
     const signRan = generateSignRan(appKey, appSecret, nonce, timer);
 
-    // 准备请求参数
     const params: Record<string, string> = {
       appKey,
       version: 'v1.3.0',
@@ -117,9 +93,8 @@ export async function GET() {
       signRan
     };
 
-    // 构建请求URL
     const queryString = new URLSearchParams(params).toString();
-    const requestUrl = `${apiUrl}?${queryString}`;
+    const requestUrl = `${GOODS_LIST_API}?${queryString}`;
 
     console.log('Full request details:', {
       url: requestUrl,
@@ -127,7 +102,6 @@ export async function GET() {
       signRan
     });
 
-    // 发送请求
     const response = await fetch(requestUrl, {
       method: 'GET',
       headers: {
@@ -138,17 +112,13 @@ export async function GET() {
     
     const data = await response.json();
 
-    // 检查API返回的错误码
     if (data.code !== 0) {
       throw new Error(`API error: ${data.msg}`);
     }
 
-    // 获取商品列表
     const items = data.data.list;
-
-    // 为每个商品获取转链URL
     const itemsWithLinks = await Promise.all(
-      items.map(async (item: GoodsItem) => {
+      items.map(async (item: any) => {
         try {
           const shortUrl = await getPrivilegeLink(item.goodsId);
           return {
@@ -159,7 +129,7 @@ export async function GET() {
           console.error(`Error getting privilege link for item ${item.goodsId}:`, error);
           return {
             ...item,
-            shortUrl: '' // 如果转链失败，返回空字符串
+            shortUrl: ''
           };
         }
       })
@@ -175,7 +145,6 @@ export async function GET() {
       }
     });
   } catch (error) {
-    // 捕获并记录详细错误信息
     console.error('Detailed error in lucky-items API:', {
       error: error instanceof Error ? {
         message: error.message,
@@ -185,8 +154,7 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       env: {
         hasAppKey: !!process.env.DTK_APP_KEY,
-        hasAppSecret: !!process.env.DTK_APP_SECRET,
-        apiUrl: process.env.DTK_API_URL
+        hasAppSecret: !!process.env.DTK_APP_SECRET
       }
     });
     

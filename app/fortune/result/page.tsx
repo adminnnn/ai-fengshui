@@ -718,7 +718,7 @@ export default function FortuneResult() {
                 
                 {/* 底部说明文字 */}
                 <div className="mt-6 text-sm text-gray-500 text-center">
-                  * 以上商品均经过精心挑选，适合作为开运吉物使用。如果您喜欢本站，请购买支持，谢谢！
+                  * 以上商品根据您的最终分析，适合作为开运吉物使用。如果您喜欢本站，请购买支持，谢谢！
                 </div>
               </>
             )}
