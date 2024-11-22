@@ -102,7 +102,61 @@ export default function Fortune() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = '/fortune/result';
+    
+    if (!selectedDate) {
+      alert('请选择出生日期');
+      return;
+    }
+
+    if (!formData.timeRange) {
+      alert('请选择出生时辰');
+      return;
+    }
+
+    try {
+      // 显示加载状态
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      loadingDiv.innerHTML = `
+        <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p class="text-gray-700">正在进行八字分析，请稍候...</p>
+        </div>
+      `;
+      document.body.appendChild(loadingDiv);
+
+      // 调用 API 进行测算
+      const response = await fetch('/api/fortune-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          gender: formData.gender,
+          birthDate: selectedDate.toISOString().split('T')[0],
+          timeRange: formData.timeRange,
+        }),
+      });
+
+      const result = await response.json();
+
+      // 移除加载状态
+      document.body.removeChild(loadingDiv);
+
+      if (!response.ok || result.error) {
+        throw new Error(result.error || '分析请求失败');
+      }
+
+      // 将分析结果存储到 localStorage
+      localStorage.setItem('fortuneResult', JSON.stringify(result));
+      
+      // 跳转到结果页面
+      window.location.href = '/fortune/result';
+    } catch (error) {
+      console.error('提交失败:', error);
+      alert(error instanceof Error ? error.message : '分析请求失败，请稍后重试');
+    }
   };
 
   return (

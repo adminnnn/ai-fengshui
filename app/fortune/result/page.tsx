@@ -36,7 +36,7 @@ ChartJS.register(
   RadarController
 );
 
-// 为折线图定义选项类型
+// 为折线图定义选项型
 const lineChartOptions: ChartOptions<'line'> = {
   responsive: true,
   plugins: {
@@ -86,173 +86,46 @@ const radarChartOptions: ChartOptions<'radar'> = {
 };
 
 export default function FortuneResult() {
-  // 模拟测算结果数据
-  const resultData = {
-    basicInfo: {
-      name: "张三",
-      gender: "男",
-      birthDate: "1990年8月15日",
-      birthTime: "子时",
-      eightCharacters: "庚午 丙申 丁酉 壬子",
-    },
-    analysis: {
-      destiny: {
-        title: "命格解析",
-        content: "您命中天干偏印配七杀，八字中火土较旺，具有较强的领导能力和创造力。性格坚韧不拔，意志力强，但需注意过于刚强可能带来的人际关系问题。",
-      },
-      career: {
-        title: "事业运势",
-        content: "2024年事业运势向上，适合开拓新的领域。上半年会遇到贵人相助，下半年适合稳扎稳打。建议在6月前把握机会，积极进取。有望在专业领域获得重要突破。",
-      },
-      wealth: {
-        title: "财运分析",
-        content: "今年财运起伏较大，但整体向上。3月、7月、11月是财运高峰期，适合投资和理财。需要注意的是9月可能有破财风险，应当谨慎处理财务。适合发展副业或投资理财。",
-      },
-      debt: {
-        title: "负债分析",
-        content: "今年债务压力相对较轻，但仍需谨慎处理借贷关系。建议在7月前处理完历史债务，下半年避免新增大额负债。理财时需要控制风险，避免激进投资。",
-      },
-      marriage: {
-        title: "婚恋运势",
-        content: "感情方面今年桃花运旺盛，特别是在春季和秋季。已婚者夫妻关系和睦，未婚者容易遇到心仪的对象。需要注意的是感情不宜过于急进，应当循序渐进。",
-      },
-      truelove: {
-        title: "正缘分析",
-        content: "您的正缘桃花在东南方向最旺，适合通过工作或社交活动结识对象。最佳缘分出现时间在7-9月间，对方可能从事教育或艺术相关工作。",
-      },
-      health: {
-        title: "健康运势",
-        content: "需要特别注意消化系统和呼吸系统的保养。建议保持规律作息，适当运动，注意饮食调理。今年春季和冬季是健康的关键时期，应做好保健工作。",
-      },
-      education: {
-        title: "学业运势",
-        content: "学习运势佳，特别适合参加考试和进修。建议在5-8月间参加重要考试或认证。专注力和记忆力都处于较好状态，可以尝试突破自己的知识瓶颈。",
-      },
-      children: {
-        title: "子女缘分",
-        content: "子女缘分较好，若有生育计划，今年是较为理想的时机。子女与您的缘分深厚，将来在事业上能得到子女的帮助。教育方面需要注意因材施教。",
-      },
-      yearly: {
-        title: "大运流年",
-        content: "目前正值上升运势，未来十年整体运势走高。2024-2026年是事业上升期，2027-2029年适合稳固发展，2030年后将迎来人生新高峰。",
-      },
-      name: {
-        title: "姓名解析",
-        content: "您的姓名五行属木，与命局形成相生之势。姓名对事业有积极影响，有助于提升个人威望和领导能力。建议在重要场合使用完整姓名，以彰显个人魅力。",
-      }
-    },
-    suggestions: {
-      lucky: {
-        colors: ["红色", "紫色", "金色"],
-        numbers: ["1", "6", "8", "9"],
-        directions: ["东南", "南", "东"],
-        elements: ["火", "土"],
-      },
-      timing: {
-        goodMonths: ["3月", "7月", "11月", "12月"],
-        cautionMonths: ["4月", "9月"],
-        goodHours: ["午时", "巳时", "寅时"],
-        cautionHours: ["申时", "子时", "亥时"],
-      },
-      solutions: [
-        "佩戴紫水晶可增强运势",
-        "在办公室东南方位放置绿植",
-        "适合在早上7-9点处理重要事务",
-        "建议在春季开展新项目",
-        "选择红色或紫色为主色调的服装",
-        "佩戴五行属火的饰品可助运",
-      ],
-      yearly_advice: [
-        "今年适积极进取，开拓事业新方向",
-        "感情方面应保持开放和真诚的态度",
-        "投资理财宜稳健为主，避免激进",
-        "注意保持作息规律，适度运动",
-        "可考虑参加进修或考试",
-        "可考虑参加小孩子比赛",
-      ],
-    },
-  };
-
-  // 运势走向数据
-  const fortuneChartData = {
-    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-    datasets: [
-      {
-        label: '综合运势',
-        data: [70, 75, 85, 65, 75, 80, 90, 85, 70, 80, 85, 90],
-        borderColor: 'rgb(124, 58, 237)',
-        backgroundColor: 'rgba(124, 58, 237, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: '事业运',
-        data: [65, 70, 80, 75, 85, 80, 85, 90, 75, 80, 85, 95],
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: '财运',
-        data: [75, 80, 90, 60, 70, 85, 95, 80, 65, 85, 90, 85],
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
-
-  // 添加雷达图数据
-  const radarData = {
-    labels: ['事业运', '财运', '感情运', '健康运', '学业运', '人际运'],
-    datasets: [{
-      label: '运势分析',
-      data: [85, 80, 75, 90, 70, 85],
-      backgroundColor: 'rgba(124, 58, 237, 0.2)',
-      borderColor: 'rgb(124, 58, 237)',
-      pointBackgroundColor: 'rgb(124, 58, 237)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgb(124, 58, 237)',
-    }]
-  };
-
-  // 添加分析项的图标映射
-  const analysisIcons: { [key: string]: string } = {
-    destiny: "🎯", // 命格
-    career: "💼", // 事业
-    wealth: "💰", // 财运
-    debt: "📊", // 负债
-    marriage: "💑", // 婚恋
-    truelove: "❤️", // 正缘
-    health: "💪", // 健
-    education: "📚", // 学业
-    children: "👶", // 子女缘
-    yearly: "🌟", // 大运流年
-    name: "✍️", // 姓名解析
-  };
-
-  // 在 basicInfo 后添加评分数据
-  const scoreData = {
-    total: 94,  // 综合评分
-    aspects: [
-      { name: "事业运", score: 95 },
-      { name: "财运", score: 92 },
-      { name: "健康运", score: 96 },
-      { name: "感情运", score: 93 },
-    ]
-  };
-
-  // 在 FortuneResult 组件内部添加状态
-  const [luckyItems, setLuckyItems] = useState<LuckyItem[]>([]);
+  // 1. 将所有 useState 声明移到组件顶部
+  const [resultData, setResultData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [displayCount, setDisplayCount] = useState(10); // 默认显示10个商品
-  const [itemsPerRow, setItemsPerRow] = useState(5); // 默认每行5个
+  const [luckyItems, setLuckyItems] = useState<LuckyItem[]>([]);
+  const [displayCount, setDisplayCount] = useState(10);
+  const [itemsPerRow, setItemsPerRow] = useState(5);
 
-  // 添加 useEffect 获取数据
+  // 2. 定义常量和静态数据
+  const analysisIcons: { [key: string]: string } = {
+    destiny: "🎯",
+    career: "💼",
+    wealth: "💰",
+    debt: "📊",
+    marriage: "💑",
+    truelove: "❤️",
+    health: "💪",
+    education: "📚",
+    children: "👶",
+    yearly: "🌟",
+    name: "✍️",
+  };
+
+  // 3. useEffect hooks
+  useEffect(() => {
+    // 从 localStorage 获取分析结果
+    const savedResult = localStorage.getItem('fortuneResult');
+    if (savedResult) {
+      try {
+        const parsedResult = JSON.parse(savedResult);
+        setResultData(parsedResult);
+      } catch (err) {
+        setError('无法加载分析结果');
+      }
+    } else {
+      setError('未找到分析结果');
+    }
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
     const fetchLuckyItems = async () => {
       try {
@@ -265,11 +138,6 @@ export default function FortuneResult() {
         
         const data = await response.json();
         
-        // 检查是否有错误返回
-        if (data.error) {
-          throw new Error(data.message || '获取商品数据失败');
-        }
-        
         if (data.code === 0 && data.data?.list) {
           setLuckyItems(data.data.list);
         } else {
@@ -278,73 +146,90 @@ export default function FortuneResult() {
       } catch (error) {
         console.error('Error fetching lucky items:', error);
         setError(error instanceof Error ? error.message : '获取商品数据失败');
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchLuckyItems();
   }, []);
 
-  // 在组件内部定义重试函数
-  const retryFetch = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/api/lucky-items');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.message || '获取商品数据失败');
-      }
-      if (data.code === 0 && data.data?.list) {
-        setLuckyItems(data.data.list);
-      } else {
-        throw new Error(data.msg || '获取商品数据失败');
-      }
-    } catch (error) {
-      console.error('Error in retry:', error);
-      setError(error instanceof Error ? error.message : '获取商品数据失败');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 添加窗口大小监听和商品显示数量计算
   useLayoutEffect(() => {
     function updateSize() {
       const width = window.innerWidth;
       let newItemsPerRow;
       
-      // 根据屏幕宽度设置每行显示数量
-      if (width >= 1536) { // 2xl
+      if (width >= 1536) {
         newItemsPerRow = 5;
-      } else if (width >= 1280) { // xl
+      } else if (width >= 1280) {
         newItemsPerRow = 4;
-      } else if (width >= 1024) { // lg
+      } else if (width >= 1024) {
         newItemsPerRow = 3;
-      } else if (width >= 768) { // md
+      } else if (width >= 768) {
         newItemsPerRow = 2;
-      } else { // sm and xs
+      } else {
         newItemsPerRow = 2;
       }
       
       setItemsPerRow(newItemsPerRow);
-      setDisplayCount(newItemsPerRow * 2); // 始终显示2行
+      setDisplayCount(newItemsPerRow * 2);
     }
 
-    // 初始化
     updateSize();
-
-    // 添加窗口大小变化监听
     window.addEventListener('resize', updateSize);
-    
-    // 清理监听器
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
+  // 从 resultData 中获取所需数据
+  const { scoreData, fortuneChartData, radarData } = resultData || {};
+
+  // 4. 加载状态检查
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+    </div>;
+  }
+
+  // 5. 错误状态检查
+  if (error || !resultData) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-red-500 mb-4">{error || '加载失败'}</p>
+        <Link href="/fortune" className="text-primary-600 hover:underline">
+          返回重新测算
+        </Link>
+      </div>
+    </div>;
+  }
+
+  // 6. 准备默认图表数据
+  const defaultChartData = {
+    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    datasets: [
+      {
+        label: '综合运势',
+        data: Array(12).fill(75),
+        borderColor: 'rgb(124, 58, 237)',
+        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+        tension: 0.4,
+        fill: true,
+      }
+    ],
+  };
+
+  const defaultRadarData = {
+    labels: ['事业运', '财运', '感情运', '健康运', '学业运', '人际运'],
+    datasets: [{
+      label: '运势分析',
+      data: [75, 75, 75, 75, 75, 75],
+      backgroundColor: 'rgba(124, 58, 237, 0.2)',
+      borderColor: 'rgb(124, 58, 237)',
+      pointBackgroundColor: 'rgb(124, 58, 237)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgb(124, 58, 237)',
+    }]
+  };
+
+  // 7. 渲染组件
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-b from-primary-50 to-white">
       <div className="max-w-4xl mx-auto">
@@ -404,7 +289,7 @@ export default function FortuneResult() {
                           className="text-center"
                         >
                           <span className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-primary-600 to-pink-600">
-                            {scoreData.total}
+                            {scoreData?.total || 0}
                           </span>
                           <span className="text-sm text-gray-500 block">分</span>
                         </motion.div>
@@ -436,7 +321,7 @@ export default function FortuneResult() {
 
                 {/* 右侧：分项评分 */}
                 <div className="grid grid-cols-2 gap-4">
-                  {scoreData.aspects.map((aspect, index) => (
+                  {scoreData?.aspects.map((aspect, index) => (
                     <motion.div
                       key={aspect.name}
                       initial={{ opacity: 0, x: 20 }}
@@ -736,7 +621,7 @@ export default function FortuneResult() {
               <h2 className="text-xl font-semibold text-primary-600">运势走向预测</h2>
             </div>
             <div className="aspect-[16/9] w-full">
-              <Line data={fortuneChartData} options={lineChartOptions} />
+              <Line data={fortuneChartData || defaultChartData} options={lineChartOptions} />
             </div>
             <div className="mt-4 text-sm text-gray-500">
               * 图表显示未来一年的运势变化趋势，包括综合运势、事业运和财运三个维度
@@ -755,7 +640,7 @@ export default function FortuneResult() {
               <h2 className="text-xl font-semibold text-primary-600">运势分析雷达图</h2>
             </div>
             <div className="aspect-[16/9] w-full">
-              <Radar data={radarData} options={radarChartOptions} />
+              <Radar data={radarData || defaultRadarData} options={radarChartOptions} />
             </div>
             <div className="mt-4 text-sm text-gray-500">
               * 雷达图展示各个生活领域的运势强弱分布
