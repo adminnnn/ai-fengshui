@@ -3,7 +3,8 @@
 基于 Next.js 14 和 Deepseek AI 打造的现代化八字算命平台。
 
 
-##截图赏析
+## 截图赏析
+
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
@@ -47,7 +48,7 @@
 - DeepSeek AI API
 
 
-##赠人咖啡，唇齿留香
+## 赠人咖啡，唇齿留香
 ![alt text](799d05c944cdd641403b0ae1d80803a.jpg)
 ![alt text](4e6e128d4e215ed3359e0ca8623a60d.jpg)
 
@@ -57,14 +58,14 @@
 - ai处理结果时间较长，需要优化
 
 ## env文件配置
-# 大淘客API配置
+#大淘客API配置
 DTK_APP_KEY=
 DTK_APP_SECRET=
 
-# Deepseek API配置
+#Deepseek API配置
 DEEPSEEK_API_KEY=
 
-##注意
+## 注意
 本项目使用 MIT 协议进行开源，在此基础上，必须在页面底部保留署名以及指向本项目的链接。如果不想保留署名，必须首先获得授权。
 
 同样适用于基于本项目的二开项目。
